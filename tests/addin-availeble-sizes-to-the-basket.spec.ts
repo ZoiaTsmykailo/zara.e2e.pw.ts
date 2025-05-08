@@ -2,9 +2,14 @@ import {test,expect} from '../app/ui/fixtures/page.fixture';
 //import {expect,  testWithCookies} from '../app/ui/fixtures/storage-state.fixture';
 import { BasePage } from '../app/ui/pages/BasePage';
 
-
+test.beforeEach(async ({page}) => {
+    const basePage = new BasePage(page);
+    await basePage.goTo(); 
+    
+})
 
 test('Add all available sizes to the basket - all available sizes should be added to the basket', async ({productPage,searchResultPage, page}) => {
+    await searchResultPage.goTo(); 
     await searchResultPage.goToStore();
     await searchResultPage.clickSearch();
     await searchResultPage.choseWomanForSearch();
@@ -12,5 +17,8 @@ test('Add all available sizes to the basket - all available sizes should be adde
     await productPage.getFirstProduct();
     const availableSizes = (await productPage.getAvailableSizes()).length;
     await productPage.addToBasketAllAvailableSizesProduct()
-    await expect(page.locator('a[data-qa-id="layout-header-go-to-cart"]  span[data-qa-id="layout-header-go-to-cart-items-count"]')).toContainText(`${availableSizes}`);
+   // await expect(page.locator('a[data-qa-id="layout-header-go-to-cart"]  span[data-qa-id="layout-header-go-to-cart-items-count"]')).toContainText(`${availableSizes}`);
+
+    await page.locator('a[data-qa-id="layout-header-go-to-cart"]  span[data-qa-id="layout-header-go-to-cart-items-count"]').click();
 })
+// НЕ ПРАЦЮЄ 

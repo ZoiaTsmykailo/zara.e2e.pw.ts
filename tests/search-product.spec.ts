@@ -1,6 +1,7 @@
 import { test,expect } from '../app/ui/fixtures/storage-state.fixture';
 import { CookieModal } from '../app/ui/modals/cookie-modal/CookieModal';
 import { BasePage } from '../app/ui/pages/BasePage';
+import { BasketPage } from '../app/ui/pages/BasketPage';
 import { ProductPage } from '../app/ui/pages/ProductPage';
 import { SearchResultPage } from '../app/ui/pages/SearchResultPage';
 
@@ -78,6 +79,16 @@ test.skip('User does not see cookie modal after accepting once', async ({ page }
     });
   }
   await expect(page.locator('a[data-qa-id="layout-header-go-to-cart"]  span[data-qa-id="layout-header-go-to-cart-items-count"]')).toContainText(`${availableSizes.length}`);
+
+  //переходимо у корзину
+
+  await page.locator('a[data-qa-id="layout-header-go-to-cart"]  span[data-qa-id="layout-header-go-to-cart-items-count"]').click();
+   const basketPage = new BasketPage(page);
+   await basketPage.getSizesListInBasket();
+
+   const text = await page.locator('span.shop-cart-item-details-base__size').allInnerTexts();
+    console.log('Розміри:', text);
+   
   
 });
 
