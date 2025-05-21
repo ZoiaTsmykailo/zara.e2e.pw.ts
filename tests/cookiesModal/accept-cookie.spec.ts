@@ -5,8 +5,8 @@ import { CookieModal } from '../../app/ui/modals/cookie-modal/CookieModal';
 test.describe('Cookie modal tests on Zara.com', () => {
 
     test.beforeEach(async ({ page }) => {
-      const basePage = new BasePage(page);
-      await basePage.goTo();
+      
+      await page.goto(process.env.BASEURL!);
     });
 
     test('User accepts all cookies', async ({ page }) => {

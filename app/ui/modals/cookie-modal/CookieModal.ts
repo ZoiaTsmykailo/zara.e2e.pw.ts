@@ -17,22 +17,16 @@ export class CookieModal {
   } 
 
   async acceptCookies() {
-    
-        await this.acceptButton.click();
-        await this.modal.waitFor({state: 'hidden'});
-      
+      await this.acceptButton.click();
+      await this.modal.waitFor({state: 'hidden'});
   };
 
   async rejectCookies() {
-    
-        await this.rejectButton.click();
-        await this.modal.waitFor({state: 'hidden'});
-    
+      await this.rejectButton.click();
+      await this.modal.waitFor({state: 'hidden'});
   };
 
   async settingsCookies() {
-    
         await this.settingsButton.click();
-      
   }
 };

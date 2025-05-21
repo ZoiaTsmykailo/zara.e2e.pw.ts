@@ -1,5 +1,5 @@
 import {Locator, Page} from '@playwright/test';
-export class BasePage {
+export abstract class BasePage {
    protected page: Page;
    protected goToStoreLocator: Locator;
    

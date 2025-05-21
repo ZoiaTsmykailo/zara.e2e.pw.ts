@@ -2,25 +2,28 @@ import {Locator, Page} from '@playwright/test'
 import { BasePage } from './BasePage';
 
 export class BasketPage extends BasePage {
-    private sizeListLocators: Locator;
-    private removeButtonLocator: Locator;
-
+    private removeUnitButtonLocator: Locator;
+    private productListInBasketLocator: Locator;
+    buttonContinueLocator: Locator;
     constructor(page: Page) {
         super(page);
-        this.sizeListLocators = page.locator('.shop-cart-item-details-base__size');
-        this.removeButtonLocator = page.locator('button[data-qa-action="remove-order-item"]');
+        this.removeUnitButtonLocator = page.locator('div[data-qa-id="remove-order-item-unit"]');
+        this.productListInBasketLocator = page.locator('li.shop-cart-item');
+        this.buttonContinueLocator = page.locator('button[data-qa-id="shop-continue"]');
+    }
+    async deleteEverySecondSizeInBasket(countProductsInCart: number) {
+        for (let i = countProductsInCart - 1; i >= 0; i--) {
+                if (i % 2 !== 0) {
+                    await this.removeUnitButtonLocator.nth(i).click();
+                    await this.page.waitForTimeout(1000); 
+                }
+            } 
+    }
+    async getCountOfProductsInBasket() {
+        await this.productListInBasketLocator.nth(1).isVisible();
+        const listProductInCart = this.productListInBasketLocator;
+        const countProductsInCart = await listProductInCart.count();
+        return countProductsInCart;
     }
 
-   
-    async getSizesListInBasket(): Promise<string[]> {
-        const locator = this.page.locator('span.shop-cart-item-details-base__size');
-        
-        await locator.first().waitFor({ timeout: 5000 });
-        
-        const sizes = await locator.allInnerTexts();
-        console.log('sizes in basket:', sizes);
-        return sizes;
-      }
-
-   
-}
+};

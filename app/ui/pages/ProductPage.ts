@@ -1,116 +1,65 @@
-import { Locator, Page } from "@playwright/test";
+import { expect, Locator, Page } from "@playwright/test";
 import { BasePage } from "./BasePage";
 
 export class ProductPage extends BasePage {
   private addToCartLocator: Locator;
+  public productClickLocator: Locator;
+  private sizeButtonsLocators: Locator;
+  private closeModalLocator: Locator;
+  private basketLinkLocator: Locator;
+  
     constructor(page: Page) {
         super(page);
         this.addToCartLocator = page.locator('button[data-qa-action="add-to-cart"]');
+        this.productClickLocator = page.locator('a[data-qa-action="product-click"]');
+        this.sizeButtonsLocators = page.locator('li.size-selector-sizes-size--enabled button');
+        this.closeModalLocator = page.getByRole('button', { name: 'Close' });
+        this.basketLinkLocator = page.getByRole('link', { name: `Products in basket` });
     }
     
     async getFirstProduct() {
-      await this.page.locator('a[data-qa-action="product-click"]').first().click();
-    }
-
-    async getAvailableSizes() {
-      await this.addToCartLocator.click();
-      const sizeButtons = this.page.locator('button[data-qa-action="size-in-stock"]');
-  
-      const result =  await sizeButtons.evaluateAll(buttons =>
-        buttons.map(btn => ({
-          text: btn.textContent?.trim() || '',
-          qualifier: btn.getAttribute('data-qa-qualifier') || '',
-        }))
-
-       
-      );
-      return result;
+      await this.productClickLocator.first().click();
     };
 
-    async addToBasketAllAvailableSizesProduct () {
-     
-      const availableSizes = await this.getAvailableSizes();
-      console.log(availableSizes);
-      console.log(availableSizes.length);
-      if(availableSizes.length>3){
-
-         for (const sizeElement of availableSizes){
-        
-          const sizeText = sizeElement.text;
-      // const sizeButton =  page.getByRole('button', { name: sizeText, exact: true });
-        
-           const sizeButton = this.page.locator('button.size-selector-sizes-size__button').filter({
-             has: this.page.locator('div.size-selector-sizes-size__label'),
-             hasText: new RegExp(`^${sizeText}$`)
-            });
-        
-           await sizeButton.click();
-          // await this.page.getByRole('button', { name: 'close' }).click();
-          await this.closeSizeModal(); 
-          await this.page.locator(`span span:has-text("ADD")`).click();
-        
-      }
-       availableSizes.forEach((item, index) => {
-      console.log(`Індекс: ${index}, значення:`, item);
-       });
-      }
-    }
-
-
-
-    async getProducts() {
-      const products = this.page.locator('a[data-qa-action="product-click"]');
-      const count = await products.count();
-      
-      for (let i = 0; i < count; i++) {
-       const product = products.nth(i);
-
-         await product.click();
-         await this.addToCartLocator.click();
-        
-          const countSizeLocator = this.page.locator('div[data-qa-qualifier="size-selector-sizes-size-label"]');
-          const sizes = this.page.locator('size-selector-sizes-size__action size-selector-sizes-size__element');
-          
-          const countSize = await  countSizeLocator.count();
-          const viewSimilar = sizes.locator('span:text("View similar")');
-          const viewSimilarCount =await viewSimilar.count();
-          console.log(countSize);
-          if (countSize>3  && countSize-viewSimilarCount > 4){
-              for (let i = 1; i < countSize+1; i++){
-                  const size = countSizeLocator.nth(i);
-
-                  await size.click();
-                  
-                  // const closeModal = this.page.locator('button[aria-label="close"]');
-                  
-                  //await closeModal.click();   
-                  await this.closeSizeModal();                
-                  
-                  await this.addToCartLocator.click();
-                  
-               }
-               
-            break;
-              } 
-          else   await this.page.goBack(); 
-       
-      }
+    async getCountOfProducts () {
+      await this.page.waitForTimeout(2000);
+      const products =  this.productClickLocator;
+      await products.first().isVisible();
+      const countProduct = await products.count();
+      return countProduct;
+    };
     
-    }
-  
-  async addSizeToCart(sizeLocator: Locator) {
-      const addBtn = this.addToCartLocator;
-  
-      await sizeLocator.click();
-      await this.closeSizeModal();
-      await addBtn.waitFor({ state: 'visible' });
-      await addBtn.click(); 
-  };
-  
-  async closeSizeModal() {
-      const closeBtn = this.page.getByRole('button', { name: 'close' });
-      await closeBtn.waitFor({ state: 'visible' });
-      await closeBtn.click();
-  };
+    async addAllSizesOfProduct(countProduct: number) {
+      for( let p = 0; p < countProduct; p++){
+              await this.productClickLocator.nth(p).click();
+              const addButton = this.addToCartLocator;
+              await addButton.waitFor({ state: 'visible' });
+              await addButton.click();
+              const sizeButtons =  this.sizeButtonsLocators;
+              const filteredSizes = sizeButtons.filter({
+                    hasNot: this.page.locator('span', { hasText: 'Coming soon' }),
+               }).filter({
+                    hasNot: this.page.locator('span', { hasText: 'View similar' }),
+              });
+              const sizeCount = await filteredSizes.count();
+              if (sizeCount > 3){
+                  for (let i = 0; i< sizeCount; i++){
+                  await this.sizeButtonsLocators.nth(i).waitFor({state:'visible'});
+                  await this.sizeButtonsLocators.nth(i).click();
+                  await this.closeModalLocator.waitFor({state: 'visible',timeout: 2000});
+                  await this.closeModalLocator.click();
+                  await this.addToCartLocator.waitFor({state: 'visible',timeout: 2000});
+                  await this.addToCartLocator.click();
+                  }
+                  return sizeCount;  
+               }
+          break;
+       }   
+    };
 
-  }
+    async clickBasketLink(){
+      await this.basketLinkLocator.click();
+      await expect(this.page.locator('li.shop-cart-item').first()).toBeVisible({ timeout: 5000 });
+    };
+    
+};

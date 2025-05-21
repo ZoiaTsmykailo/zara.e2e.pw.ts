@@ -1,12 +1,12 @@
 import {expect, test } from '@playwright/test';
-import { BasePage } from '../../app/ui/pages/BasePage';
+import { SearchResultPage } from '../../app/ui/pages/SearchResultPage';
 import { CookieModal } from '../../app/ui/modals/cookie-modal/CookieModal';
 import { compareCookiesAfterConsent } from './helper-cookies';
 
 test.describe('Cookie modal reject test on Zara', () => {
 
     test.beforeEach(async ({page}) => {
-        const basePage = new BasePage(page);
+        const basePage = new SearchResultPage(page);
         await basePage.goTo();
     });
 
