@@ -128,6 +128,7 @@ test("zara add all sizes to the basket when product has more then 3 availeble si
       '.zds-input-base:has([data-qa-input-qualifier="lastName"]) .form-input-error'
     )
   ).toContainText("Required field.");
+  await page.close();
 });
 
 //функція для перевірки помилок при пустих полях обовязкових

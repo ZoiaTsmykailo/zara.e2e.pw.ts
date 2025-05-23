@@ -68,8 +68,10 @@ export class ProductPage extends BasePage {
           await this.addToCartLocator.click();
         }
         return sizeCount;
+      } else {
+        await this.page.goBack();
+        await this.productClickLocator.first().waitFor();
       }
-      break;
     }
   }
 

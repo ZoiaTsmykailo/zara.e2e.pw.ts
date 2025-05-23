@@ -6,7 +6,7 @@ test("1ZARA: Add available sizes to the cart and delete every second product in 
   await pages.searchResultPage.goTo();
   await pages.searchResultPage.goToStore();
   await pages.searchResultPage.clickSearch();
-  await pages.searchResultPage.findProduct("джинси");
+  await pages.searchResultPage.findProduct("sweatshirt");
   await pages.productPage.productClickLocator
     .first()
     .waitFor({ state: "visible", timeout: 5000 });
