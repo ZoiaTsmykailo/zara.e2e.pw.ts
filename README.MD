@@ -5,17 +5,17 @@ The tests automate core user journeys like searching products, handling modals, 
 
 ---
 
-## ✨ Features
+## Features
 
-- 🔹 Playwright with TypeScript for robust E2E automation
-- 🔹 Page Object Model (POM) architecture
-- 🔹 Cookie modal handling and storage state support
-- 🔹 Test fixtures for consistent setup and reuse
-- 🔹 Examples of iterating through product sizes and basket logic
+- Playwright with TypeScript for robust E2E automation
+- Page Object Model (POM) architecture
+- Cookie modal handling and storage state support
+- Test fixtures for consistent setup and reuse
+- Examples of iterating through product sizes and basket logic
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 
@@ -29,17 +29,22 @@ git clone https://github.com/ZoiaTsmykailo/zara.e2e.pw.ts.git
 cd zara.e2e.pw.ts
 npm install         # or yarn install
 npx playwright install
+```
 
-Running Tests
 Run all tests:
-bash
+
+```bash
 npx playwright test
+```
 
 Run a specific test:
-bash
-npx playwright test tests/working-test.spec.ts
 
-View HTML test report:
-bash
+```bash
+npx playwright test tests/working-test.spec.ts
+```
+
+View the HTML test report:
+
+```bash
 npx playwright show-report
 ```
